@@ -1,0 +1,44 @@
+# Local secrets/configuration
+.env
+.env.*
+!.env.example
+database-credential.md
+*.pem
+*.key
+
+# Terraform state, provider cache, and local sensitive variables
+terraform/.terraform/
+terraform/*.tfstate
+terraform/*.tfstate.*
+terraform/*.tfvars
+!terraform/terraform.tfvars.example
+terraform/crash.log
+terraform/crash.*.log
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+node_modules/
+dist/
+build/
+coverage/
+*.log
+
+# Local SQLite migration source and transient files
+/database/data/*.sqlite3
+/database/data/*.sqlite3-journal
+/database/data/*.sqlite3-shm
+/database/data/*.sqlite3-wal
+
+# Tooling/editor output
+.DS_Store
+.vscode/
+.idea/
+Thumbs.db
+
+# Machine-local notes and commands
+wsl command.txt

@@ -1,0 +1,15 @@
+postgres_db       = "marketpulse"
+postgres_user     = "marketpulse"
+postgres_password = "marketpulse_local"
+postgres_port     = 5432
+
+pgadmin_email    = "admin@marketpulse.dev"
+pgadmin_password = "pgadmin_local"
+pgadmin_port     = 5050
+dozzle_port      = 8080
+frontend_port    = 5173
+
+price_refresh_interval_seconds    = 60
+price_stale_after_seconds         = 180
+coinbase_request_timeout_seconds  = 8
+log_level                         = "INFO"
