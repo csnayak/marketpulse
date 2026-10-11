@@ -1,28 +1,28 @@
 locals {
-  frontend_files = sort(tolist(fileset("${path.module}/../frontend/src", "**")))
+  frontend_files = sort(tolist(fileset("${path.module}/../frontend-dashboard/src", "**")))
 }
 
 resource "docker_image" "frontend" {
-  name         = "marketpulse-frontend:local"
+  name         = "marketpulse-frontend-dashboard:local"
   keep_locally = true
 
   build {
-    context = "${path.module}/../frontend"
-    tag     = ["marketpulse-frontend:local"]
+    context = "${path.module}/../frontend-dashboard"
+    tag     = ["marketpulse-frontend-dashboard:local"]
   }
 
   triggers = {
     source_hash = sha256(join("", concat(
       [
-        filesha256("${path.module}/../frontend/Dockerfile"),
-        filesha256("${path.module}/../frontend/.dockerignore"),
-        filesha256("${path.module}/../frontend/nginx.conf"),
-        filesha256("${path.module}/../frontend/package.json"),
-        filesha256("${path.module}/../frontend/package-lock.json"),
-        filesha256("${path.module}/../frontend/index.html"),
-        filesha256("${path.module}/../frontend/vite.config.ts"),
+        filesha256("${path.module}/../frontend-dashboard/Dockerfile"),
+        filesha256("${path.module}/../frontend-dashboard/.dockerignore"),
+        filesha256("${path.module}/../frontend-dashboard/nginx.conf"),
+        filesha256("${path.module}/../frontend-dashboard/package.json"),
+        filesha256("${path.module}/../frontend-dashboard/package-lock.json"),
+        filesha256("${path.module}/../frontend-dashboard/index.html"),
+        filesha256("${path.module}/../frontend-dashboard/vite.config.ts"),
       ],
-      [for file in local.frontend_files : filesha256("${path.module}/../frontend/src/${file}")]
+      [for file in local.frontend_files : filesha256("${path.module}/../frontend-dashboard/src/${file}")]
     )))
   }
 }

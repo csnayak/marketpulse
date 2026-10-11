@@ -14,14 +14,19 @@ terraform/*.tfvars
 !terraform/terraform.tfvars.example
 terraform/crash.log
 terraform/crash.*.log
+terraform/tfplan
+terraform/*.tfplan
 
 # Python
 .venv/
+.pixi/
 __pycache__/
 *.py[cod]
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
+.coverage
+htmlcov/
 node_modules/
 dist/
 build/

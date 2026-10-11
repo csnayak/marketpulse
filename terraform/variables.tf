@@ -48,6 +48,12 @@ variable "dozzle_port" {
   default     = 8080
 }
 
+variable "pgview_port" {
+  description = "Host port for pgweb (pgview), bound to localhost."
+  type        = number
+  default     = 8081
+}
+
 variable "frontend_port" {
   description = "Host port for the MarketPulse frontend, bound to localhost."
   type        = number
@@ -57,6 +63,11 @@ variable "frontend_port" {
 variable "price_refresh_interval_seconds" {
   type    = number
   default = 60
+}
+
+variable "catalog_refresh_interval_seconds" {
+  type    = number
+  default = 3600
 }
 
 variable "price_stale_after_seconds" {

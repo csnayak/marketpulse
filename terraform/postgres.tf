@@ -33,6 +33,13 @@ resource "docker_container" "postgres" {
     read_only = true
   }
 
+  mounts {
+    target    = "/docker-entrypoint-initdb.d/002_marketpulse_dashboard_schema.sql"
+    source    = abspath("${path.module}/../api-service/db-schema/schema.sql")
+    type      = "bind"
+    read_only = true
+  }
+
   healthcheck {
     test         = ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
     interval     = "5s"

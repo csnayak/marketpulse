@@ -8,7 +8,8 @@ The schema contains:
 
 - `tracked_products`: application-owned Coinbase markets maintained through CRUD.
 - `coinbase_market_catalog`: cached Coinbase catalog metadata used for product discovery.
-- `latest_quotes`: one current exact-decimal quote and last-attempt/error state per product.
+- `latest_market_stats`: the current 24h snapshot and last-attempt/error state for each tracked product.
+- `quote_history`: append-only snapshot history for trend and scoring work.
 - `bootstrap_state`: progress for the initial 10-market bootstrap.
 
 Prices use PostgreSQL `NUMERIC` and Python `Decimal`. Timestamps use `TIMESTAMPTZ` and are stored in UTC. A failed fetch must not replace a previous successful price.
@@ -51,9 +52,9 @@ SELECT id, coinbase_product_id, name, is_active
 FROM public.tracked_products
 ORDER BY name;
 
-SELECT p.coinbase_product_id, q.price, q.quote_currency, q.retrieved_at
+SELECT p.coinbase_product_id, q.last_price, q.retrieved_at
 FROM public.tracked_products AS p
-LEFT JOIN public.latest_quotes AS q ON q.product_id = p.id
+LEFT JOIN public.latest_market_stats AS q ON q.product_id = p.id
 ORDER BY p.name;
 ```
 
@@ -106,9 +107,9 @@ Example queries:
 
 ```sql
 SELECT id, coinbase_product_id, name, is_active FROM tracked_products ORDER BY name;
-SELECT p.coinbase_product_id, q.price, q.quote_currency, q.retrieved_at
+SELECT p.coinbase_product_id, q.last_price, q.retrieved_at
 FROM tracked_products AS p
-LEFT JOIN latest_quotes AS q ON q.product_id = p.id
+LEFT JOIN latest_market_stats AS q ON q.product_id = p.id
 ORDER BY p.name;
 ```
 

@@ -1,6 +1,6 @@
 locals {
-  postgres_url  = "postgresql+psycopg://${var.postgres_user}:${urlencode(var.postgres_password)}@postgres:5432/${var.postgres_db}"
-  backend_files = sort(tolist(fileset("${path.module}/../backend/src", "**")))
+  postgres_url      = "postgresql+psycopg://${var.postgres_user}:${urlencode(var.postgres_password)}@postgres:5432/${var.postgres_db}"
+  api_service_files = sort(tolist(fileset("${path.module}/../api-service/src", "**")))
 }
 
 resource "docker_network" "marketpulse" {

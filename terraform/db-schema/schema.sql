@@ -50,19 +50,6 @@ CREATE TABLE IF NOT EXISTS coinbase_market_catalog (
 CREATE INDEX IF NOT EXISTS idx_coinbase_catalog_search
     ON coinbase_market_catalog (is_eligible, quote_currency, base_currency);
 
-CREATE TABLE IF NOT EXISTS latest_quotes (
-    product_id            INTEGER PRIMARY KEY
-                          REFERENCES tracked_products(id) ON DELETE CASCADE,
-    price                 NUMERIC,
-    quote_currency        TEXT NOT NULL,
-    retrieved_at          TIMESTAMPTZ,
-    provider_trade_time   TIMESTAMPTZ,
-    last_attempt_at       TIMESTAMPTZ,
-    last_error_category   TEXT,
-    CHECK (price IS NULL OR price > 0),
-    CHECK (retrieved_at IS NULL OR price IS NOT NULL)
-);
-
 CREATE TABLE IF NOT EXISTS bootstrap_state (
     id                    SMALLINT PRIMARY KEY CHECK (id = 1),
     target_count          INTEGER NOT NULL DEFAULT 10 CHECK (target_count > 0),

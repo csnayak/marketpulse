@@ -195,11 +195,25 @@ def bootstrap(conn: psycopg.Connection) -> int:
             """, (product_id, base, quote_currency, str(market.get("base_name") or base))).fetchone()
             if row:
                 conn.execute("""
-                    INSERT INTO latest_quotes (
-                        product_id, price, quote_currency, retrieved_at,
-                        provider_trade_time, last_attempt_at
-                    ) VALUES (%s,%s,%s,%s,%s,%s)
-                """, (row["id"], price, quote_currency, now, trade_time, now))
+                    INSERT INTO latest_market_stats (
+                        product_id, open_24h, high_24h, low_24h, last_price, volume_24h,
+                        retrieved_at, last_attempt_at, last_error_category
+                    ) VALUES (%s, NULL, NULL, NULL, %s, NULL, %s, %s, NULL)
+                    ON CONFLICT (product_id) DO UPDATE SET
+                        open_24h = EXCLUDED.open_24h,
+                        high_24h = EXCLUDED.high_24h,
+                        low_24h = EXCLUDED.low_24h,
+                        last_price = EXCLUDED.last_price,
+                        volume_24h = EXCLUDED.volume_24h,
+                        retrieved_at = EXCLUDED.retrieved_at,
+                        last_attempt_at = EXCLUDED.last_attempt_at,
+                        last_error_category = NULL
+                """, (row["id"], price, now, now))
+                conn.execute("""
+                    INSERT INTO quote_history (
+                        product_id, open_24h, high_24h, low_24h, last_price, volume_24h, retrieved_at
+                    ) VALUES (%s, NULL, NULL, NULL, %s, NULL, %s)
+                """, (row["id"], price, now))
                 inserted += 1
 
     total = conn.execute("SELECT count(*) FROM tracked_products").fetchone()["count"]

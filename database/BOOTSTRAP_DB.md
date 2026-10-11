@@ -12,7 +12,7 @@ In normal mode, the script:
 2. Connects to PostgreSQL and checks `bootstrap_state`. If it says bootstrap is complete, prints the current tracked-product count and exits without contacting Coinbase.
 3. Fetches Coinbase's public product catalog and updates the local catalog cache.
 4. Selects eligible USD crypto markets, preferring the configured major-market list.
-5. Requests live ticker prices for missing tracked markets and inserts up to the target count, along with their initial quote rows.
+5. Requests live ticker prices for missing tracked markets and inserts up to the target count, along with their initial current-price snapshot and history rows.
 6. Records whether bootstrap is complete or partial and prints a summary.
 
 The script only uses Coinbase's public HTTP endpoints. It does not need an API key, modify Coinbase data, start Docker, create the PostgreSQL database, or create its tables. PostgreSQL must already be running, the named database must exist, and the schema must already be initialized.
@@ -58,7 +58,8 @@ The schema defines:
 
 - `tracked_products`: products tracked by the app, including whether they are active and whether they came from bootstrap or manual entry.
 - `coinbase_market_catalog`: cached Coinbase product metadata, including status and eligibility.
-- `latest_quotes`: latest quote and retrieval/error metadata for each tracked product.
+- `latest_market_stats`: current 24h snapshot and retrieval/error metadata for each tracked product.
+- `quote_history`: append-only snapshot history used for long-term trend analysis.
 - `bootstrap_state`: target count, progress status, timestamps, and the most recent bootstrap error.
 - Indexes for active product sorting and market catalog lookup.
 
@@ -89,7 +90,7 @@ For catalog entries with valid IDs and currency strings, the script upserts into
 
 ### Tracked products and initial quotes
 
-For each successfully verified candidate, the script inserts a row in `tracked_products` with `source = 'bootstrap'` and a name from Coinbase's `base_name` field, falling back to the base currency. If the product insert succeeds, it inserts the verified price into `latest_quotes` with its quote currency, local retrieval time, optional Coinbase trade time, and last-attempt time.
+For each successfully verified candidate, the script inserts a row in `tracked_products` with `source = 'bootstrap'` and a name from Coinbase's `base_name` field, falling back to the base currency. If the product insert succeeds, it stores the verified price in `latest_market_stats` and appends a snapshot to `quote_history` with the local retrieval time and last-attempt time.
 
 An already tracked product is not renamed, replaced, or given a new initial quote by this script. It does not delete any product or quote. Ongoing price refreshes are handled by the separate worker.
 
